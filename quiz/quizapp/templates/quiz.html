@@ -1,0 +1,257 @@
+<html>
+<title>Take Quiz</title>
+<head>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+<!-- Google Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+var pos=0;
+var rec_qus=[];
+var rec_ans=[];
+var qus=[];
+var rec_all=[];
+var pass_status;
+var itr;
+var i;
+'{%for i in obj%}'
+qus.push('{{i.qustion}}')
+'{%endfor%}'
+var option1_arr=[];
+var option2_arr=[];
+var option3_arr=[];
+var option4_arr=[];
+'{%for i in obj%}'
+option1_arr.push('{{i.option1}}')
+'{%endfor%}'
+'{%for i in obj%}'
+option2_arr.push('{{i.option2}}')
+'{%endfor%}'
+'{%for i in obj%}'
+option3_arr.push('{{i.option3}}')
+'{%endfor%}'
+'{%for i in obj%}'
+option4_arr.push('{{i.option4}}')
+'{%endfor%}'
+var answer=[];
+'{%for i in obj%}'
+answer.push('{{i.answer}}')
+'{%endfor%}'
+var explain=[]
+'{%for i in obj%}'
+explain.push('{{i.explains}}')
+'{%endfor%}'
+var crt=0;
+var x=0;
+var start_time;
+var end_time;
+var time;
+var usr_name;
+var rec_q;
+var rec_exp;
+'{%for i in obj%}'
+var id='{{i.course_id}}';
+'{%endfor%}'
+'{%for i in id%}'
+var pass_mark='{{i.pass_precent}}';
+'{%endfor%}'
+function nme()
+{
+
+var sec = 0;
+    function pad ( val ) { return val > 9 ? val : "0" + val; }
+    setInterval( function(){
+        $("#seconds").html(pad(++sec%60));
+        $("#minutes").html(pad(parseInt(sec/60,10)));
+    }, 1000);
+
+
+usr_name=document.getElementById("username").value;
+document.getElementById("un").innerHTML = "NAME : "+usr_name.toUpperCase();
+document.getElementById("butn").disabled = false;
+document.getElementById("bn").disabled = true;
+document.getElementById("username").disabled = true;
+}
+
+function m()
+{
+
+document.getElementById("user_name").innerHTML="";
+document.getElementById("smt").innerHTML="";
+
+if(pos<=(qus.length-1))
+{
+document.getElementById("rec").innerHTML = "";
+document.getElementById("status").innerHTML = pos+1+"/"+qus.length;
+document.getElementById("qus").innerHTML =pos+1+".&nbsp;"+qus[pos];
+document.getElementById("op1").innerHTML = "<input onclick=validate() id='radio_button1' name='radio_button' type='radio' value="+option1_arr[pos]+" />&nbsp;&nbsp;"+option1_arr[pos]+"<br />";
+document.getElementById("op2").innerHTML = "<input onclick=validate() id='radio_button1' name='radio_button' type='radio' value="+option2_arr[pos]+" />&nbsp;&nbsp;"+option2_arr[pos]+"<br />";
+document.getElementById("op3").innerHTML = "<input onclick=validate() id='radio_button1' name='radio_button' type='radio' value="+option3_arr[pos]+" />&nbsp;&nbsp;"+option3_arr[pos]+"<br />";
+document.getElementById("op4").innerHTML = "<input onclick=validate() id='radio_button1' name='radio_button' type='radio' value="+option4_arr[pos]+" />&nbsp;&nbsp;"+option4_arr[pos]+"<br />";
+document.getElementById("sub").innerHTML = "";
+document.getElementById("nxt").innerHTML = "";
+pos++;
+}
+else
+{
+var compl_time= end_time - start_time;;
+if(compl_time == 0)
+{
+compl_time=" Less then a ";
+}
+else
+{
+compl_time= (end_time - start_time);
+}
+var mark_precent=(crt/qus.length)*100;
+if(mark_precent >= pass_mark)
+{
+pass_status=" You are pass."
+document.getElementById("op1").innerHTML = "<p class='alert alert-success'><strong>Hey "+usr_name.toUpperCase()+""+ pass_status+"</strong><br/>Your Score is "+ crt +" out of "+ qus.length +".<br/>You need to got "+ pass_mark +"% but you get "+mark_precent+"% You preformence is well.<br/>You Start a quiz at "+start_time+".<br/>You end a quiz at "+new Date()+".</p>";
+}
+else
+{
+pass_status=" you are fail."
+document.getElementById("op1").innerHTML = "<p class='alert alert-danger'><strong>Hey "+usr_name.toUpperCase()+""+ pass_status+"</strong><br/>Your Score is " + crt +" out of "+ qus.length +".<br/>You need to got "+pass_mark+"% to pass but you get "+ mark_precent +"% You need to improve your preformance.<br/>You Start a quiz at "+start_time+".<br/>You end a quiz at "+new Date()+".</p>";
+}
+end_time=new Date();
+document.getElementById("nxt_btn").innerHTML = "Thankyou For Participate Our Quiz !!!<br/>";
+document.getElementById("rec").innerHTML = "Developed By Mariraja Selvaraj.";
+document.getElementById("watch").innerHTML = "";
+document.getElementById("qus").innerHTML = "Result";
+document.getElementById("op2").innerHTML = "";
+document.getElementById("op3").innerHTML = "<center><button onclick='nme1()' id='show_record' class='btn btn-pink lighten-3'>View Recoarded Qustion Answers</button></center>";
+document.getElementById("op4").innerHTML = ""	;
+document.getElementById("sub").innerHTML = "";
+}
+}
+
+function nme1()
+{
+
+document.getElementById("show_record").disabled = true;
+if(rec_all.length == 0)
+{
+swal("Sorry, You Dose Not Recoard Any Qustion.");
+}
+else
+{
+ document.getElementById("op4").innerHTML = "<hr/><center class='alert alert-info'><strong>Recoarded Qustion Answers</strong></center><hr/><div class='container alert alert-warning'>"+rec_all.join('<hr/>')+"</div><hr/>";
+}
+}
+
+
+function recoard()
+				{
+				document.getElementById("rec_ord").disabled = true;
+				val=pos-1;
+				rec_q="Qustion Number : "+ pos+" ."+qus[val];
+				rec_val="Answer : "+answer[val];
+				rec_exp="Explanation : "+explain[val];
+				rec_all.push(rec_q);
+				rec_all.push(rec_val);
+				rec_all.push(rec_exp);
+				swal({
+                      title: "ANSWER RECOARDED",
+                       text: "You Recoard Answer "+rec_val,
+                       icon: "success",
+                       button: "ok"
+                           } );
+				}
+
+function validate()
+{
+var element = document.getElementsByName('radio_button'); 
+              
+            for(i = 0; i < element.length; i++) { 
+                if(element[i].checked) 
+				var x=element[i].value;
+                }
+		
+				if(x==answer[pos-1])
+				{
+				document.getElementById("sub").innerHTML = "<span class='alert alert-success'> Your Answer is correct.Click submit button to view explainations.</span><hr/><input type='submit' value='SUBMIT ANSWER' class='btn btn-primary' onclick='nxt()'><hr/>";
+				}
+				
+				else
+				{
+				document.getElementById("sub").innerHTML = "<span class='alert alert-danger'> Your Answer is wrong. The correct answer is "+answer[pos-1]+". Click submit button to view explainations.</span><hr/><input type='submit' value='SUBMIT ANSWER' class='btn btn-primary' onclick='nxt()'><hr/>";
+				}
+
+}
+function nxt()
+{
+var element = document.getElementsByName('radio_button'); 
+              
+            for(i = 0; i < element.length; i++) { 
+                if(element[i].checked) 
+				var x=element[i].value;
+                }
+		
+				if(x==answer[pos-1])
+				{
+				crt++;
+				document.getElementById("marks").innerHTML = crt+"/"+qus.length;
+				document.getElementById("op1").innerHTML = "<p class='alert alert-success'>Your Answer "+ x +" Is correct .</p>";
+				document.getElementById("op2").innerHTML = "<p class='alert alert-warning'>Explanation <br/>"+ explain[pos-1] +"</p>";
+                document.getElementById("op3").innerHTML = "";
+                document.getElementById("op4").innerHTML = "";
+				document.getElementById("sub").innerHTML = "<input type='submit' value='NEXT' class='btn btn-success' onclick='m()'>";
+				document.getElementById("rec").innerHTML = "<input type='submit' id='rec_ord' value='RECOARD ANSWER' class='btn btn-danger' onclick='recoard()'>";
+				}
+				else
+				{
+				document.getElementById("op1").innerHTML = "<p class='alert alert-danger'>Your Answer "+ x +" is wrong.</p>";
+				document.getElementById("op2").innerHTML = "<p class='alert alert-success'>The Correct answer is "+ answer[pos-1] +".";
+                document.getElementById("op3").innerHTML = "<p class='alert alert-warning'>Explanation <br/>"+ explain[pos-1] +"</p>";
+                document.getElementById("op4").innerHTML = "";
+				document.getElementById("sub").innerHTML = "<input type='submit' value='NEXT' class='btn btn-success' onclick='m()'>";
+				document.getElementById("rec").innerHTML = "<input type='submit' id='rec_ord' value='RECOARD ANSWER' class='btn btn-danger' onclick='recoard()'>";
+				}
+}
+function enb()
+{
+start_time=new Date();
+document.getElementById("bn").disabled = false;
+}
+</script>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+  <span class="text text-Light"><strong><h2 id="watch"><strong  class="text text-Light bg bg-info">&nbsp;<span id="minutes">00</span>:<span id="seconds">00</span>&nbsp;</strong></h2></strong></span><span id="marks"></span><span class="text text-warning"><strong>QUSTIONS :&nbsp;<span id="status">0</span></strong><strong class="text text-danger"></strong><strong class="text text-danger"><center><span id="un">@Developed By MARIRAJA S.</span></center></strong></span></nav><br/><br/>
+<div class="container">
+<div class="card">
+  <div class="card-body">
+   <center><strong><h5 class="card-title strong text text-danger" id="qus">
+	*** INSTRUCTIONS ***
+	</h5></strong></center><hr/><br/>
+    <p class="card-text">
+<p id="op1">1.This Quiz Contain <script> document.write(qus.length); </script> Qustions.</p></br>
+<p id="op2">2.You need <script>document.write(pass_mark);</script>% to pass this quiz.</p></br>
+<p id="op3">3.You must to choose any one of the option otherwise the submit button cannot be display.<br/><br/><br/>
+4.If you submit the answer by clicking submit button then your answer validate imidiatly and indimate yor answer is correct (or) not with nesseary explainations.<br/><br/><br/>
+5.In this system give a option to recoard a qustion answers with explainations by click a button Recoard Qustion Answers.<br/><br/><br/>
+6.You can able to navigate next qustion by clicking ' next ' button.<br/><br/><br/>
+7.You can unable to access privious qustion.
+</p></br>
+<p id="op4">8.In navigation bar you can able to see qustion status.<br/><br/><br/>
+9.In Result page you can able to see your result.<br/><br/><br/>10.In result page you can able to see recoarded qustion answer by clicking view recoarded qustion answers.<br/><br/><br/><span class="text text-primary">Register Your Name For Take Quiz.</span>
+</p>
+    </p>
+    <span id="user_name"><input type="text" id="username" placeholder="Enter Your Name" onclick="enb()" class="form-control w-25" required></span>
+  <span id="smt"><input type="submit" onclick="nme()" id="bn" value="SUBMIT" class="btn btn-danger" disabled ></span>
+  </form>
+  </div>
+  <center><span id="nxt_btn"><p id="sub"><button onclick="m()" id="butn" class="btn btn-success" disabled><img src="https://img.icons8.com/android/24/26e07f/start.png"/>&nbsp; START QUIZZ</button></p><p id="nxt"></p></span>&nbsp;<span id="rec"></span></center></br></div>
+</div>
+</br>
+<br/>
+<br/>
+</body>
+</html>
